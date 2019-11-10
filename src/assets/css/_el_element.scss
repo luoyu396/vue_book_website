@@ -1,0 +1,121 @@
+.el-tabs--card{
+	.el-tabs__header {
+		margin: 0;
+		.el-tabs__nav {
+			border-top: none;
+			border-bottom: none;
+			border-right: none;
+			border-radius: 2px 2px 0 0;
+		}
+
+		.el-tabs__item {
+			background-color: #FFFFFF;
+			color: #333333;
+			border-radius: 2px 2px 0 0;
+			border: 1px solid $line;
+
+			&.is-active {
+				color: #FFFFFF;
+				background-color: #4178DB;
+				border: 1px solid #4178DB;
+				border-bottom: none;
+				position: relative;
+			}
+		}
+
+		.el-tabs__item+.el-tabs__item {
+			margin-left: 7px;
+		}
+	}
+	.el-tabs__content {
+		background: #FFFFFF;
+		padding: 10px 15px 0px;
+		box-sizing: border-box;
+	}
+}
+
+.el-calendar-table thead th {
+	padding: 12px 8px; 
+}
+.el-calendar__body {
+	padding: 0px;
+}
+.el-calendar-table .el-calendar-day {
+	height: 48px;
+}
+
+.el-table__header {
+  thead th{
+		background-color:  #F8F8F8;
+		.cell {
+			text-align: center;
+		}
+	}
+}
+.el-table__row {
+	td .cell a {
+		font-size: 14px;
+		color: #333333;
+	}
+	td:hover .cell a{
+		color: rgba(62,130,255,1);
+		border-bottom: 1px solid rgba(62,130,255,1);
+	}
+}
+.el-input {
+	.el-input__inner {
+		border-radius: 2px;
+	}
+	&.el-input-group {
+		.el-input-group__prepend {
+			border-top-left-radius: 2px;
+			border-bottom-left-radius: 2px;
+		}
+		.el-input-group__append {
+			border-top-right-radius: 2px;
+			border-bottom-right-radius: 2px;
+		}
+	}
+}
+.el-pagination{
+	font-weight: normal;	
+	text-align: center;
+	padding: 10px;
+	background: #FFFFFF;
+}
+.el-pagination.is-background .el-pager li:not(.disabled).active{
+	background: #4178db;
+}
+.el-radio__input.is-checked .el-radio__inner {
+	border-color: #4178db;
+	background: #4178db;
+}
+.el-button {
+	border-radius: 2px;
+}
+
+.el-carousel {
+	.el-carousel__button {
+		background-color: #4178DB;
+	}
+}
+.el-dialog__header {
+	height: 40px;
+	background-color: #4178DB;
+	line-height: 40px;
+	padding: 0px 0px 0px 10px;
+	.el-dialog__title {
+		color: #FFFFFF;
+		font-size: 16px;
+	}
+	.el-dialog__body {
+			padding-top: 15px;
+	}
+	.el-dialog__headerbtn {
+		font-size: 25px;
+		top: 0px;
+		.el-dialog__close {
+			color: #FFFFFF;
+		}
+	}
+}

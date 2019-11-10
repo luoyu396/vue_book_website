@@ -1,0 +1,116 @@
+@charset "utf-8";
+.header{
+  .header-content{
+    position: relative;
+    height: 200px;
+    .wrap{
+      position: relative;
+      height: 200px;
+      font-size: 12px;
+    }
+    .banner{
+      position: absolute;
+      right: 20px;
+      bottom: 74px;
+      text-align: right;
+      color: #fff;
+      padding: 15px;
+      background: rgba(1, 1, 1, 0.5);
+      dd{
+        margin-bottom: 20px;
+        font-size: 26px;
+      }
+      dt{
+        font-size: 14px;
+      }
+    }
+    .nav{
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background-color: rgba(60,97,180,0.65);
+      height: 50px;
+      li{
+        display: inline-block;
+        height: 50px;
+        line-height: 50px;
+        font-size: 16px;
+        a{
+          cursor: pointer;
+          padding: 0 40px;
+          color: #fff;
+          display: block;
+          &.active{
+            background-color: rgba(60,97,180,1);
+          }
+        }
+      }
+      .other{
+        position: absolute;
+        right: 0;
+        top: 5px;
+      }
+      .wrap-header {
+        height: 50px;
+      }
+    }
+  }
+}
+.body{
+  background-color: #ECEEF3;
+  padding-bottom: 20px;
+}
+.ui-option{
+  @include clear;
+  line-height: 34px;
+  .option-left{
+    @include float;
+  }
+  .option-right{
+    @include float(right);
+  }
+  .option-item{
+    @include float;
+    font-size: 14px;
+    height: 34px;
+    line-height: 34px;
+  }
+  .option-item-select{
+    @include float;
+    font-size: 14px;
+    height: 34px;
+    line-height: 34px;
+    .el-select{
+      width: 500px;
+      // height: 30px;
+      // overflow-y: hidden;
+    }
+  }
+  .option-title{
+    font-size: 14px;
+    color: $gray;
+    &:before{
+      position: relative;
+      top: 3px;
+      display: inline-block;
+      content: '';
+      width: 3px;
+      height: 16px;
+      margin-right: 5px;
+      background-color: $primary;
+    }
+  }
+  .option-item+.option-item{
+    margin-left: 10px;
+  }
+}
+.footer{
+  text-align: center;
+  height: 60px;
+  line-height: 60px;
+  font-size: 14px;
+  padding-top: 15px;
+  p {
+    line-height: 20px;
+  }
+}
