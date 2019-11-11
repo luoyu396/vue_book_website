@@ -27,3 +27,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+#app {
+  height: 70%;
+}
+</style>

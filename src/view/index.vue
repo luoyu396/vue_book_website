@@ -1,5 +1,5 @@
 <template>
-  <div class="body books">
+  <div class="body">
     <div class="home">
         <router-view></router-view>
       </div>
