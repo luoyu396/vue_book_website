@@ -26,8 +26,6 @@
             <span class="right-item">￥ {{rowData.salePrice * rowData.discount}}</span>
           </li>
         </ul>
-        <!-- 更多， 由父组件控制显隐 -->
-        <a class="link-more" @click="handleMoreClick(tabItem)">更多</a>
       </div>
     </el-tab-pane>
   </el-tabs>
