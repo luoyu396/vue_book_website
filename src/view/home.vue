@@ -66,6 +66,10 @@ export default {
     return {
       //树形节点URL
       treeNodeUrl: this.$url + "type/treeNodes",
+      //查询总销量URL
+      statSaleCountUrl: this.$url + "statistics/statisticses",
+      //查询新书URL
+      bookListUrl: this.$url + "book/queryListPage2",
       //树形节点集合
       treeNodeList: [],
       checkindex:0,
@@ -90,19 +94,21 @@ export default {
         res = res.data;
         if (res.code == 200) {
           _this.treeNodeList = res.data;
-          console.log(_this.treeNodeList);
         }else {
           _this.treeNodeList = [];
         }
       });
     },
+    //展示子集
     toggle (index,groupName) {
       this.checkindex = index;
       this.groupName = groupName;
     },
+    //跳转图书列表
     goTo (typeId) {
       alert(typeId);
     },
+    //查询
     searchForm(){
 
     },
@@ -119,7 +125,41 @@ export default {
         nodeRouter: "",
         list: []
       });
+      //查询畅销榜
+      this.initStatisticsList(0);
+      //查询新品上市
+      this.initNewBookList(1);
     },
+    //查询畅销榜
+    initStatisticsList(index) {
+      var _this = this;
+      var params = Object.assign(
+        {
+          statisticsType: "1",
+        }
+      );
+      _this.$ajax.post(_this.statSaleCountUrl, params).then(res => {
+        res = res.data;
+        if (res.code == 200) {
+          _this.tabList[index].list = res.data.list;
+        } else {
+          _this.tabList[index].list = [];
+        }
+      });
+    },
+    //查询新品上市
+    initNewBookList(index) {
+      var _this = this;
+      _this.$ajax.post(_this.bookListUrl, null).then(res => {
+        res = res.data;
+        if (res.code == 200) {
+          _this.tabList[index].list = res.data.list;
+        } else {
+          _this.tabList[index].list = [];
+        }
+      });
+    },
+    //点击标签行
     handleClick(tab) {
       console.log(tab);
     },

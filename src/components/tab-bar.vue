@@ -22,8 +22,8 @@
             v-for="(rowData, index) of tabItem.list"
             :key="index"
           >
-            {{rowData.title}}
-            <span class="right-item">{{rowData.desc}}</span>
+           {{index+1}} &nbsp;&nbsp;&nbsp;&nbsp;{{rowData.author}}.{{rowData.bookName}}.{{rowData.publisher}}
+            <span class="right-item">￥ {{rowData.salePrice * rowData.discount}}</span>
           </li>
         </ul>
         <!-- 更多， 由父组件控制显隐 -->
@@ -104,10 +104,8 @@ export default {
         font-size: 14px;
         box-sizing: border-box;
         border-bottom: 1px solid #d9d9d9;
-        a {
-          cursor: pointer;
-        }
-        &:hover a {
+        cursor: pointer;
+        &:hover {
           color: #3e82ff;
           border-bottom: 1px solid #3e82ff;
         }
