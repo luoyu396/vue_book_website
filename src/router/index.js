@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import index from '@/view/index'
 import home from '@/view/home'
+import book from '@/view/book'
 Vue.use(Router)
 
 export default new Router({
@@ -19,9 +20,14 @@ export default new Router({
       redirect: '/index/home',
       children: [
         {
-        path: 'home',
-        name: 'home',
-        component: home,
+          path: 'home',
+          name: 'home',
+          component: home,
+        },
+        {
+          path: 'book',
+          name: 'book',
+          component: book,
         },
       ]
     }

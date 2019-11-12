@@ -106,7 +106,12 @@ export default {
     },
     //跳转图书列表
     goTo (typeId) {
-      alert(typeId);
+      this.$router.push({
+        name: "book",
+        params: {
+            typeId: this.typeId
+        }
+      });
     },
     //查询
     searchForm(){
