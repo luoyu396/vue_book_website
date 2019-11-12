@@ -109,13 +109,18 @@ export default {
       this.$router.push({
         name: "book",
         params: {
-            typeId: this.typeId
+            search: this.search
         }
       });
     },
     //查询
     searchForm(){
-
+      this.$router.push({
+        name: "book",
+        params: {
+            typeId: this.typeId
+        }
+      });
     },
     //初始化右侧标签
     initTabList() {

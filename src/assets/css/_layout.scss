@@ -1,0 +1,27 @@
+@charset "utf-8";
+// 面包屑
+.breadcrumb{
+  font-size: 14px;
+  height: 30px;
+  line-height: 30px;
+  box-sizing: border-box;
+  em,.el-breadcrumb{
+    display: inline-block;
+    vertical-align: bottom;
+    line-height: inherit;
+  }
+}
+
+.books{
+  .content-box{
+    background-color: #fff;
+    padding: 20px;
+  }
+  .ui-table{
+    th,td{
+      font-size: 14px;
+      color: $gray;
+      padding: 2px;
+    }
+  }
+}
