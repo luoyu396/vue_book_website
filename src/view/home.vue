@@ -2,7 +2,7 @@
   <div class="home">
     <div class="wrap clear">
       <div class="home-search">
-        <el-input placeholder="请输入查询关键字" v-model="search" class="input-with-select">
+        <el-input placeholder="图书名称/出版社/作者/ISBN" v-model="search" class="input-with-select">
           <el-button type="primary" @click="searchForm" class="el-icon-search btn" slot="append"></el-button>
         </el-input>
         <el-button class="my-card">我的购物车<i class="el-icon-information"></i></el-button>
@@ -60,7 +60,6 @@
 
 <script>
 import TabBarComponent from '@/components/tab-bar'
-
 export default {
   data() {
     return {
@@ -84,7 +83,7 @@ export default {
     this.initTabList();
   },
   components: {
-    'v-tab-bar': TabBarComponent,
+    'v-tab-bar': TabBarComponent
   },
   methods: {
     //获取分类树形节点集合

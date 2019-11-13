@@ -1,21 +1,18 @@
 <template>
  <div class="book-list-container">
-    <v-search-bar :data="bookInfos.bookSortObject" @buildSearchResult='buildSearchResult'>
-      <template slot="footer">共<span class="num">{{bookInfos.count}}</span>个商品</template>
-    </v-search-bar>
     <div class="list-container">
       <dl class="info-list" 
-        v-for="item in bookInfos.bookList" 
-        :key="item.id"
-        @click="handleViewProductDetil(item)">
-        <dd><img :src="item.img" alt="" @error="handleError($event)"></dd>
+        v-for="item in bookInfos.list" 
+        :key="item.bookId"
+        @click="handleViewBookDetil(item)">
+        <dd><img :src="$imgUrl+item.downloadUrl" alt=""></dd>
         <dt>
-          <p class="price"><span>¥ {{item.price}}</span> 元</p>
-          <p v-for="(desc, index) in item.desc" 
-            :key="index" 
-            @click.stop="handleDescClick(item.id, item.desc.length, index)">
-            <span :title="desc">{{desc}}</span>
-            </p>
+          <p class="price"><span>¥ {{item.salePrice * item.discount}}</span></p>
+          <p>
+            <span>
+              {{item.author}}.{{item.bookName}}.{{item.publisher}}
+            </span>
+          </p>
         </dt>
       </dl>
       <template v-if="this.pageable">
@@ -25,13 +22,13 @@
             background
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :current-page.sync="bookInfos.page"
+            :current-page.sync="bookInfos.pageNum"
             :page-size="bookInfos.pageSize"
             layout="prev, pager, next"
-            :total="bookInfos.count">
+            :total="bookInfos.total">
           </el-pagination>
           <span class="total-page">
-            共{{Math.ceil(bookInfos.count/bookInfos.pageSize)}}页
+            共{{isNaN(Math.ceil(bookInfos.total/bookInfos.pageSize)) ? 0 : Math.ceil(bookInfos.total/bookInfos.pageSize)}}页
           </span>
         </div>
       </template>
@@ -40,8 +37,6 @@
 </template>
 
 <script>
-import SearchBar from '@/components/search-bar'
-
  export default {
    props: {
      "pageable": Boolean, 
@@ -52,29 +47,15 @@ import SearchBar from '@/components/search-bar'
    },
    mounted: function() {
    },
-   components: {
-     'v-search-bar': SearchBar
-   },
    methods: {
-    buildSearchResult(result) {
-      //告诉父组件请求处理操作
-      this.$emit("handleOrderRule", result);
-    },
-     handleError($event) {
-       $event.target.src = Constant.imageDefaultSource
-     },
      handleSizeChange(val) {
         this.$emit("handleSizeChange", val);
      },
      handleCurrentChange(val) {
         this.$emit("handleCurrentChange", val);
      },
-     handleViewProductDetil(item) {
-       this.$emit("handleViewProductDetil", item);
-     },
-     handleDescClick(id,length,index){
-       let item = {id,length,index};
-        this.$emit("handleDescClick", item);
+     handleViewBookDetil(item) {
+       this.$emit("handleViewBookDetil", item);
      }
    },
  }

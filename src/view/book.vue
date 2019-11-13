@@ -2,10 +2,13 @@
   <div class="info">
     <div class="wrap">
       <div class="home-search">
-        <el-input placeholder="请输入查询关键字" v-model="search" class="input-with-select">
+        <el-input placeholder="图书名称/出版社/作者/ISBN" v-model="search" class="input-with-select">
           <el-button type="primary" @click="searchForm" class="el-icon-search btn" slot="append"></el-button>
         </el-input>
-        <el-button class="my-card">我的购物车<i class="el-icon-information"></i></el-button>
+        <el-button class="my-card">
+          我的购物车
+          <i class="el-icon-information"></i>
+        </el-button>
       </div>
       <div class="rank">
         <div class="sidebar" v-for="(item, index) in rankBookList" :key="index">
@@ -37,62 +40,90 @@
           </el-breadcrumb>
         </div>
         <div class="search-box">
-      <h3 class="search-title">商品筛选</h3>
-      <div class="search-content">
-        <ul>
-          <li class="search-content-container">
-            <ul class="left">
-              <li class="">
-                <div>
-                  <label class="title">分类:</label>
-                  <select-tree ref="typeIdTree"
-                    class="input_item"
-                    :props="props"
-                    :options="treeNodeList"
-                    :value="searchParams.typeId"
-                    :clearable="isClearable"
-                    :accordion="isAccordion"
-                    @getvalue="getvalue($event)"
-                  ></select-tree>
-                </div>
-              </li>
-              <li class="type-radio">
-                <div>
-                  <label class="title">出版社:</label>
-                  <el-radio-group v-model="searchParams.publisher">
-                    <el-radio 
-                      v-for="item in publisherList" 
-                      :key="item"
-                      :label="item"
-                      >
-                      {{item}}
-                    </el-radio>
-                  </el-radio-group>
-                </div>
-              </li>
-            </ul>
-            <div class="right">
-              <el-button class="search-btn" type="primary">搜索</el-button>
-            </div>
-          </li>
-        </ul>
+          <p class="header-title">商品筛选
+          </p>
+          <ul class="search-body-wrap">
+            <li class="parent-node">
+              <p class="title-text">
+                分类:
+              </p>
+              <div>
+                <select-tree
+                  ref="typeIdTree"
+                  class="input_item"
+                  :props="props"
+                  :options="treeNodeList"
+                  :value="searchParams.typeId"
+                  :clearable="isClearable"
+                  :accordion="isAccordion"
+                  @getvalue="getvalue($event)"
+                ></select-tree>
+              </div>
+            </li>
+            <li class="parent-node">
+              <p class="title-text">
+                出版社:
+              </p>
+              <div>
+                  <span
+                    v-for="(publisher, valueIndex) in publisherList"
+                    :key="valueIndex"
+                    :class="searchParams.publisher == publisher ? 'selected search-btn' : 'search-btn'"
+                    @click="changePublisher(publisher)"
+                  >{{publisher}}</span>
+              </div>
+            </li>
+            <li class="parent-node">
+              <p class="title-text">
+                作者:
+              </p>
+              <div>
+                  <span
+                    v-for="(author, valueIndex) in authorList"
+                    :key="valueIndex"
+                    :class="searchParams.author == author ? 'selected search-btn' : 'search-btn'"
+                    @click="changeAuthor(author)"
+                  >{{author}}</span>
+              </div>
+            </li>
+            <li class="parent-node">
+              <p class="title-text">
+                定价:
+              </p>
+              <div>
+                  <el-input
+                    v-model="searchParams.sprice"
+                    style="width: 100px"
+                  ></el-input>&nbsp;&nbsp;&nbsp;&nbsp;- <el-input
+                    v-model="searchParams.eprice"
+                    style="width: 100px"
+                  ></el-input>
+              </div>
+            </li>
+          </ul>
+          <div style="min-height: 500px;">
+            <v-book-list 
+              :pageable="pageable" 
+              :bookInfos="bookInfos"
+              @handleSizeChange="handleSizeChange"
+              @handleCurrentChange="handleCurrentChange"
+              @handleViewBookDetil="handleViewBookDetil">
+            </v-book-list>
+          </div>
+        </div>
       </div>
-    </div>
-
-
-
-      </div>
-      
     </div>
   </div>
 </template>
 
 <script>
 import treeSelect from "@/components/tree-select.vue";
+import BookList from './components/book-list.vue';
 
 export default {
   components: {
-    "select-tree": treeSelect
+    "select-tree": treeSelect,
+    'v-book-list': BookList
   },
   data() {
     return {
@@ -106,15 +137,23 @@ export default {
       publishersUrl: this.$url + "book/publishers",
       //获取作者
       selectAuthorsUrl: this.$url + "book/authors",
+      //高级搜索图书
+      customBookListUrl: this.$url + "book/customBookList",
       //搜索内容
       search: "",
       //分类id
       typeId: "",
+      //当前页
+      page: 1,
+      //页面大小
+      rows: 10,
       //查询参数
       searchParams: {
         typeId: "",
         publisher: "",
-        author: ""
+        author: "",
+        sprice: "",
+        eprice: ""
       },
       rankBookList: [
         {
@@ -141,7 +180,11 @@ export default {
       //出版社
       publisherList: [],
       //作者
-      authorList: []
+      authorList: [],
+      //图书信息
+      bookInfos: {},
+      //显示分页
+      pageable: false
     };
   },
   created: function() {
@@ -162,17 +205,17 @@ export default {
     _this.typeId = _this.$route.query.typeId;
     setTimeout(function() {
       _this.searchParams.typeId = _this.$route.query.typeId;
+      //查询图书
+      _this.initSearchBookList();
     }, 500);
   },
   methods: {
     //查询畅销榜
     initStatisticsList(index) {
       var _this = this;
-      var params = Object.assign(
-        {
-          statisticsType: "1",
-        }
-      );
+      var params = Object.assign({
+        statisticsType: "1"
+      });
       _this.$ajax.post(_this.statSaleCountUrl, params).then(res => {
         res = res.data;
         if (res.code == 200) {
@@ -201,7 +244,7 @@ export default {
         res = res.data;
         if (res.code == 200) {
           _this.treeNodeList = res.data;
-        }else {
+        } else {
           _this.treeNodeList = [];
           _this.$message({
             message: "列表初始化失败",
@@ -211,7 +254,7 @@ export default {
       });
     },
     // 下拉切换 取值
-    getvalue(value){
+    getvalue(value) {
       this.typeId = value == null ? "" : value;
     },
     //获取出版社
@@ -221,7 +264,8 @@ export default {
         res = res.data;
         if (res.code == 200) {
           _this.publisherList = res.data;
-        }else {
+          _this.publisherList.unshift("不限");
+        } else {
           _this.publisherList = [];
           _this.$message({
             message: "列表初始化失败",
@@ -237,7 +281,8 @@ export default {
         res = res.data;
         if (res.code == 200) {
           _this.authorList = res.data;
-        }else {
+          _this.authorList.unshift("不限");
+        } else {
           _this.authorList = [];
           _this.$message({
             message: "列表初始化失败",
@@ -246,27 +291,68 @@ export default {
         }
       });
     },
+    //切换出版社
+    changePublisher(publisher) {
+      this.searchParams.publisher = publisher;
 
+    },
+    //切换作者
+    changeAuthor(author) {
+      this.searchParams.author = author;
+
+
+    },
+    //创建实例
+    getInstance() {
+      return {
+        typeId: "",
+        publisher: "",
+        author: "",
+        sprice: "",
+        eprice: ""
+      }
+    },
     //查询
-    searchForm(){
+    searchForm() {
+      //清空高级搜索条件
+      this.searchParams = this.getInstance();
+      this.page = 1;
+      this.initSearchBookList();
+    },
+    handleSizeChange(val) {
+      this.rows = val;
+      this.initSearchBookList();
+    },
+    handleCurrentChange(val) {
+      this.page = val;
+      this.initSearchBookList();
+    },
+    //查询图书
+    initSearchBookList() {
       let _this = this;
-      _this.$ajax.get(_this.treeNodeUrl).then(res => {
+      let params = Object.assign({
+        search: _this.search,
+        page: _this.page,
+        rows: _this.rows
+      },_this.searchParams);
+      _this.$ajax.post(_this.customBookListUrl, params).then(res => {
         res = res.data;
         if (res.code == 200) {
-          _this.treeNodeList = res.data;
-        }else {
-          _this.treeNodeList = [];
-          _this.$message({
-            message: "列表初始化失败",
-            type: "error"
-          });
+          _this.bookInfos = res.data;
+          if(res.data.list.length>0) {
+            _this.pageable = true;
+          }
+          else {
+            _this.pageable = false;
+          }
+        } else {
+          _this.pageable = false;
+          _this.bookInfos = {};
         }
       });
     },
     //查看图书详情
-    handleViewBookDetil(data){
-
-    }
+    handleViewBookDetil(data) {}
   }
 };
 </script>
