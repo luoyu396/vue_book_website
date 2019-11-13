@@ -108,8 +108,8 @@ export default {
     goTo (typeId) {
       this.$router.push({
         name: "book",
-        params: {
-            search: this.search
+        query: {
+            typeId: typeId
         }
       });
     },
@@ -118,7 +118,7 @@ export default {
       this.$router.push({
         name: "book",
         params: {
-            typeId: this.typeId
+          search: this.search
         }
       });
     },

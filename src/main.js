@@ -11,6 +11,7 @@ import 'url-search-params-polyfill'
 import axios from './axios/ajax.js'
 Vue.prototype.$ajax = axios
 Vue.prototype.$url = process.env.API_HOST
+Vue.prototype.$imgUrl = process.env.IMG_PATH
 import './assets/css/common.scss'
 Vue.use(ElementUI);
 process.env.Mock && require('./mock/mock.js')

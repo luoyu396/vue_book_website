@@ -17,7 +17,7 @@
             @click="handleViewBookDetil(data)"
           >
             <dd>
-              <img :src="data.img" alt />
+              <img :src="$imgUrl+data.downloadUrl" alt />
             </dd>
             <dt>
               <p class="title" :title="data.bookName">{{data.author}}.{{data.bookName}}</p>
@@ -36,6 +36,51 @@
             <el-breadcrumb-item>书籍列表</el-breadcrumb-item>
           </el-breadcrumb>
         </div>
+        <div class="search-box">
+      <h3 class="search-title">商品筛选</h3>
+      <div class="search-content">
+        <ul>
+          <li class="search-content-container">
+            <ul class="left">
+              <li class="">
+                <div>
+                  <label class="title">分类:</label>
+                  <select-tree ref="typeIdTree"
+                    class="input_item"
+                    :props="props"
+                    :options="treeNodeList"
+                    :value="searchParams.typeId"
+                    :clearable="isClearable"
+                    :accordion="isAccordion"
+                    @getvalue="getvalue($event)"
+                  ></select-tree>
+                </div>
+              </li>
+              <li class="type-radio">
+                <div>
+                  <label class="title">出版社:</label>
+                  <el-radio-group v-model="searchParams.publisher">
+                    <el-radio 
+                      v-for="item in publisherList" 
+                      :key="item"
+                      :label="item"
+                      >
+                      {{item}}
+                    </el-radio>
+                  </el-radio-group>
+                </div>
+              </li>
+            </ul>
+            <div class="right">
+              <el-button class="search-btn" type="primary">搜索</el-button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+
+
       </div>
       
     </div>
@@ -43,17 +88,34 @@
 </template>
 
 <script>
+import treeSelect from "@/components/tree-select.vue";
+
 export default {
+  components: {
+    "select-tree": treeSelect
+  },
   data() {
     return {
       //查询总销量URL
       statSaleCountUrl: this.$url + "statistics/statisticses",
       //查询新书URL
       newBookListUrl: this.$url + "book/queryListPage2",
-      //类型ID
-      typeId: "",
+      //树形节点URL
+      treeNodeUrl: this.$url + "type/treeNodes",
+      //获取出版社
+      publishersUrl: this.$url + "book/publishers",
+      //获取作者
+      selectAuthorsUrl: this.$url + "book/authors",
       //搜索内容
       search: "",
+      //分类id
+      typeId: "",
+      //查询参数
+      searchParams: {
+        typeId: "",
+        publisher: "",
+        author: ""
+      },
       rankBookList: [
         {
           typeName: "畅销榜",
@@ -63,18 +125,45 @@ export default {
           typeName: "新品上市",
           dataList: []
         }
-      ]
+      ],
+      //树形节点集合
+      treeNodeList: [],
+      // 可清空（可选）
+      isClearable: true,
+      // 可收起（可选）
+      isAccordion: true,
+      // 配置项（必选）
+      props: {
+        value: "id",
+        label: "label",
+        children: "children"
+      },
+      //出版社
+      publisherList: [],
+      //作者
+      authorList: []
     };
   },
-  mounted: function() {
-    this.typeId = this.$route.params.typeId;
-    this.search = this.$route.params.search;
+  created: function() {
+    //获取分类树形节点集合
+    this.getTreeNodeList();
     //查询畅销榜
     this.initStatisticsList(0);
     //查询新品上市
     this.initNewBookList(1);
+    //获取出版社
+    this.selectPublishers();
+    //获取作者
+    this.selectAuthors();
   },
-  computed: {},
+  mounted: function() {
+    let _this = this;
+    _this.search = _this.$route.params.search;
+    _this.typeId = _this.$route.query.typeId;
+    setTimeout(function() {
+      _this.searchParams.typeId = _this.$route.query.typeId;
+    }, 500);
+  },
   methods: {
     //查询畅销榜
     initStatisticsList(index) {
@@ -102,6 +191,75 @@ export default {
           _this.rankBookList[index].dataList = res.data.list;
         } else {
           _this.rankBookList[index].dataList = [];
+        }
+      });
+    },
+    //获取分类树形节点集合
+    getTreeNodeList() {
+      let _this = this;
+      _this.$ajax.get(_this.treeNodeUrl).then(res => {
+        res = res.data;
+        if (res.code == 200) {
+          _this.treeNodeList = res.data;
+        }else {
+          _this.treeNodeList = [];
+          _this.$message({
+            message: "列表初始化失败",
+            type: "error"
+          });
+        }
+      });
+    },
+    // 下拉切换 取值
+    getvalue(value){
+      this.typeId = value == null ? "" : value;
+    },
+    //获取出版社
+    selectPublishers() {
+      let _this = this;
+      _this.$ajax.get(_this.publishersUrl).then(res => {
+        res = res.data;
+        if (res.code == 200) {
+          _this.publisherList = res.data;
+        }else {
+          _this.publisherList = [];
+          _this.$message({
+            message: "列表初始化失败",
+            type: "error"
+          });
+        }
+      });
+    },
+    //获取作者
+    selectAuthors() {
+      let _this = this;
+      _this.$ajax.get(_this.selectAuthorsUrl).then(res => {
+        res = res.data;
+        if (res.code == 200) {
+          _this.authorList = res.data;
+        }else {
+          _this.authorList = [];
+          _this.$message({
+            message: "列表初始化失败",
+            type: "error"
+          });
+        }
+      });
+    },
+
+    //查询
+    searchForm(){
+      let _this = this;
+      _this.$ajax.get(_this.treeNodeUrl).then(res => {
+        res = res.data;
+        if (res.code == 200) {
+          _this.treeNodeList = res.data;
+        }else {
+          _this.treeNodeList = [];
+          _this.$message({
+            message: "列表初始化失败",
+            type: "error"
+          });
         }
       });
     },
