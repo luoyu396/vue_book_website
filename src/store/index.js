@@ -8,7 +8,12 @@ export default new Vuex.Store({
   mutations: {
     setSysData (state, config) {
       Object.keys(config).forEach(key=>{
-          state[key] = config[key];
+        state[key] = config[key];
+      });
+    },
+    clearSysData (state, config) {
+      Object.keys(config).forEach(key=>{
+        state[key] = null;
       });
     }
   },

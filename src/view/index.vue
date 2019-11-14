@@ -1,6 +1,6 @@
 <template>
   <div class="body books">
-    <v-header/>
+    <v-header :user="sysData"/>
     <div class="home">
       <router-view></router-view>
     </div>
