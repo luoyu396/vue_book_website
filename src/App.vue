@@ -1,21 +1,13 @@
 <template>
   <div id="app">
-    <v-header/>
     <router-view/>
-    <v-footer/>
   </div>
 </template>
 
 <script>
-import Header from './components/header';
-import Footer from './components/footer';
 export default {
   name: 'App',
-  components: {
-    'v-header': Header,
-    'v-footer': Footer
-  },
-   created () {
+  created () {
     //在页面加载时读取sessionStorage里的状态信息
     if (sessionStorage.getItem("store") ) {
         this.$store.replaceState(Object.assign({}, this.$store.state,JSON.parse(sessionStorage.getItem("store"))))
@@ -29,6 +21,6 @@ export default {
 </script>
 <style scoped>
 #app {
-  height: 70%;
+  height: 920px;
 }
 </style>

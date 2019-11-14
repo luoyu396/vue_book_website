@@ -9,7 +9,7 @@
         <dt>
           <p class="price"><span>¥ {{item.salePrice * item.discount}}</span></p>
           <p>
-            <span>
+            <span :title="item.author+'.'+item.bookName+'.'+item.publisher">
               {{item.author}}.{{item.bookName}}.{{item.publisher}}
             </span>
           </p>

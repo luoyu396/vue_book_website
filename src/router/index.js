@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import login from '@/view/login'
 import index from '@/view/index'
 import home from '@/view/home'
 import book from '@/view/book'
@@ -12,6 +13,11 @@ export default new Router({
     {
       path: '*',
       redirect: '/index'
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: login
     },
     {
       path: '/index',

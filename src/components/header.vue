@@ -4,7 +4,7 @@
       <div class="nav">
         <div class="wrap wrap-header">
           <span class="other">
-              <el-button type="primary">登录</el-button>
+              <el-button type="primary" @click="toLogin">登录</el-button>
               <el-button type="primary">注册</el-button>
           </span>
         </div>
@@ -27,7 +27,10 @@ export default {
 
   },
   methods: {
-
+    //登录
+    toLogin() {
+      window.location.href="/login";
+    }
   }
 };
 </script>

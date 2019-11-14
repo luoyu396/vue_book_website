@@ -18,6 +18,9 @@ process.env.Mock && require('./mock/mock.js')
 
 Vue.config.productionTip = false
 
+import md5 from 'js-md5';
+Vue.prototype.$md5 = md5;
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
