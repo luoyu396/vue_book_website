@@ -29,6 +29,7 @@
           <p class="login-submit">
             <el-button type="primary" @click="toLogin" size="large" class="login-btn">立即登录</el-button>
           </p>
+          <span class="toRegisterStyle" @click="toRegister">立即注册</span>
         </div>
       </div>
     </div>
@@ -96,20 +97,35 @@
           if (res.data.code == 200) {
             let userInfo = res.data.data;
             _this.$store.commit("setSysData",userInfo);
-            //跳转到主页
-            _this.$router.push({
-              name: "index"
-            });
+            if(userInfo != null) {
+              //跳转到主页
+              _this.$router.push({
+                name: "index"
+              });
+            }
           } else {
             _this.$message.error(res.data.msg);
           }
         });
       },
+      //注册
+      toRegister() {
+        this.$router.push({
+          name: "register"
+        });
+      }
     }
   };
 </script>
 <style scoped>
 .userStyle {
   padding-left: 40px;
+}
+.toRegisterStyle {
+  float:right;
+  font-size:14px;
+  margin-top:5px;
+  cursor:pointer;
+  color: red;
 }
 </style>

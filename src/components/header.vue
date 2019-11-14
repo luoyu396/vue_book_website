@@ -5,7 +5,7 @@
         <div class="wrap wrap-header">
           <span class="other">
               <template v-if="user != null && user.userId != null">
-                <span class="userNameCss">{{user.userName}}</span>
+                <span class="userNameCss">您好，{{user.userName}}</span>
                 <el-button type="primary">我的订单</el-button>
                 <el-button type="primary">我的信息</el-button>
                 <el-button type="primary" @click="toLogout">退出</el-button>
@@ -40,14 +40,18 @@ export default {
   methods: {
     //登录
     toLogin() {
-      window.location.href="/login";
+      this.$router.push({
+        name: "login"
+      });
     },
     //退出
     toLogout(){
       window.localStorage.clear();
       window.sessionStorage.clear();
       this.$store.commit("clearSysData",this.user);
-      window.location.href="/login";
+      this.$router.push({
+        name: "login"
+      });
     }
   }
 };
@@ -56,5 +60,6 @@ export default {
 .userNameCss {
   color: red;
   font-size: 16px;
+  margin-right: 10px;
 }
 </style>
