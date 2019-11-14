@@ -88,7 +88,7 @@
             </li>
             <li class="parent-node">
               <p class="title-text">
-                定价:
+                价格:
               </p>
               <div>
                   <el-input
@@ -98,6 +98,9 @@
                     v-model="searchParams.eprice"
                     style="width: 100px"
                   ></el-input>
+                  <el-button type="primary" size="small" @click="confirmPrice">
+                    确定
+                  </el-button>
               </div>
             </li>
           </ul>
@@ -141,8 +144,6 @@ export default {
       customBookListUrl: this.$url + "book/customBookList",
       //搜索内容
       search: "",
-      //分类id
-      typeId: "",
       //当前页
       page: 1,
       //页面大小
@@ -202,7 +203,6 @@ export default {
   mounted: function() {
     let _this = this;
     _this.search = _this.$route.params.search;
-    _this.typeId = _this.$route.query.typeId;
     setTimeout(function() {
       _this.searchParams.typeId = _this.$route.query.typeId;
       //查询图书
@@ -255,7 +255,9 @@ export default {
     },
     // 下拉切换 取值
     getvalue(value) {
-      this.typeId = value == null ? "" : value;
+      this.searchParams.typeId = value == null ? "" : value;
+      this.page = 1;
+      this.initSearchBookList();
     },
     //获取出版社
     selectPublishers() {
@@ -294,13 +296,14 @@ export default {
     //切换出版社
     changePublisher(publisher) {
       this.searchParams.publisher = publisher;
-
+      this.page = 1;
+      this.initSearchBookList();
     },
     //切换作者
     changeAuthor(author) {
       this.searchParams.author = author;
-
-
+      this.page = 1;
+      this.initSearchBookList();
     },
     //创建实例
     getInstance() {
@@ -318,6 +321,30 @@ export default {
       this.searchParams = this.getInstance();
       this.page = 1;
       this.initSearchBookList();
+    },
+    //确定价格
+    confirmPrice() {
+      let reg = /^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$/;
+      if(this.searchParams.sprice != null && this.searchParams.sprice != "") {
+        if(!reg.test(this.searchParams.sprice)) {
+          this.$message({
+            message: "请输入正确的开始价格",
+            type: "error"
+          });
+          return;
+        }
+      }
+      if(this.searchParams.eprice != null && this.searchParams.eprice != "") {
+        if(!reg.test(this.searchParams.eprice)) {
+          this.$message({
+            message: "请输入正确的结束价格",
+            type: "error"
+          });
+          return;
+        }
+      }
+      this.page = 1;
+      this.initSearchBookList();      
     },
     handleSizeChange(val) {
       this.rows = val;
