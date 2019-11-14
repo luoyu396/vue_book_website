@@ -11,17 +11,25 @@
 <script>
 import Header from '@/components/header';
 import Footer from '@/components/footer';
-
+import { mapState } from "vuex";
  export default {
    data () {
      return {
      }
    },
    mounted: function() {
+     console.log(this.sysData);
    },
    components: {
     'v-header': Header,
     'v-footer': Footer
+   },
+   computed: {
+    ...mapState({
+      sysData(state) {
+        return state;
+      }
+    })
    },
    methods: {
    },
