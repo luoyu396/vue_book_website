@@ -12,7 +12,7 @@
               </template>
               <template v-else>
                 <el-button type="primary" @click="toLogin">登录</el-button>
-                <el-button type="primary">注册</el-button>
+                <el-button type="primary" @click="toRegister">注册</el-button>
               </template>
           </span>
         </div>
@@ -51,6 +51,12 @@ export default {
       this.$store.commit("clearSysData",this.user);
       this.$router.push({
         name: "login"
+      });
+    },
+    //注册
+    toRegister() {
+      this.$router.push({
+        name: "register"
       });
     }
   }
