@@ -18,7 +18,6 @@ import { mapState } from "vuex";
      }
    },
    mounted: function() {
-     console.log(this.sysData);
    },
    components: {
     'v-header': Header,

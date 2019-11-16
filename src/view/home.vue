@@ -5,7 +5,10 @@
         <el-input placeholder="图书名称/出版社/作者/ISBN" v-model="search" class="input-with-select">
           <el-button type="primary" @click="searchForm" class="el-icon-search btn" slot="append"></el-button>
         </el-input>
-        <el-button class="my-card">我的购物车<i class="el-icon-information"></i></el-button>
+        <el-button class="my-card" @click="myCard">
+          我的购物车
+          <i class="el-icon-information"></i>
+        </el-button>
       </div>
       <div class="home-left">
         <div class="menu">
@@ -19,7 +22,9 @@
               class="menu-left"
               :class="{'active':index ==checkindex }"
               @mousemove="toggle(index,item.label)"
-            ><span @click="goTo(item.id)">{{item.label}}</span></div>
+            >
+              <span @click="goTo(item.id)">{{item.label}}</span>
+            </div>
             <div class="menu-right-container" :class="{'active':index == checkindex }">
               <div class="menu-right">
                 <dl :key="child.id" v-for="child in item.children">
@@ -45,21 +50,15 @@
         </div>
       </div>
       <div class="home-right">
-        <v-tab-bar 
-          @handleClick="handleClick"
-          @handleMoreClick="handleMoreClick"
-          :data="tabList"
-          :height="470"
-          :liWarpHeight="360"
-        >
-      </v-tab-bar>
+        <v-tab-bar @handleClick="handleClick" :data="tabList" :height="470" :liWarpHeight="360"></v-tab-bar>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import TabBarComponent from '@/components/tab-bar'
+import TabBarComponent from "@/components/tab-bar";
+import { mapState } from "vuex";
 export default {
   data() {
     return {
@@ -71,9 +70,9 @@ export default {
       bookListUrl: this.$url + "book/queryListPage2",
       //树形节点集合
       treeNodeList: [],
-      checkindex:0,
-      search: '',
-      tabList: [],
+      checkindex: 0,
+      search: "",
+      tabList: []
     };
   },
   mounted: function() {
@@ -83,7 +82,14 @@ export default {
     this.initTabList();
   },
   components: {
-    'v-tab-bar': TabBarComponent
+    "v-tab-bar": TabBarComponent
+  },
+  computed: {
+    ...mapState({
+      sysData(state) {
+        return state;
+      }
+    })
   },
   methods: {
     //获取分类树形节点集合
@@ -93,27 +99,27 @@ export default {
         res = res.data;
         if (res.code == 200) {
           _this.treeNodeList = res.data;
-        }else {
+        } else {
           _this.treeNodeList = [];
         }
       });
     },
     //展示子集
-    toggle (index,groupName) {
+    toggle(index, groupName) {
       this.checkindex = index;
       this.groupName = groupName;
     },
     //跳转图书列表
-    goTo (typeId) {
+    goTo(typeId) {
       this.$router.push({
         name: "book",
         query: {
-            typeId: typeId
+          typeId: typeId
         }
       });
     },
     //查询
-    searchForm(){
+    searchForm() {
       this.$router.push({
         name: "book",
         params: {
@@ -123,17 +129,20 @@ export default {
     },
     //初始化右侧标签
     initTabList() {
-      this.tabList.push({
-        nodeId: "totalCount",
-        nodeName: "畅销榜",
-        nodeRouter: "",
-        list: []
-      },{
-        nodeId: "newBook",
-        nodeName: "新品上市",
-        nodeRouter: "",
-        list: []
-      });
+      this.tabList.push(
+        {
+          nodeId: "totalCount",
+          nodeName: "畅销榜",
+          nodeRouter: "",
+          list: []
+        },
+        {
+          nodeId: "newBook",
+          nodeName: "新品上市",
+          nodeRouter: "",
+          list: []
+        }
+      );
       //查询畅销榜
       this.initStatisticsList(0);
       //查询新品上市
@@ -142,11 +151,9 @@ export default {
     //查询畅销榜
     initStatisticsList(index) {
       var _this = this;
-      var params = Object.assign(
-        {
-          statisticsType: "1",
-        }
-      );
+      var params = Object.assign({
+        statisticsType: "1"
+      });
       _this.$ajax.post(_this.statSaleCountUrl, params).then(res => {
         res = res.data;
         if (res.code == 200) {
@@ -168,14 +175,24 @@ export default {
         }
       });
     },
+    //我的购物车
+    myCard() {
+      if (this.sysData.userId == undefined || this.sysData.userId == null) {
+        this.$confirm("您还未登录，请确认是否登录？", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(() => {
+          this.$router.push({
+            name: "login"
+          });
+        });
+      }
+    },
     //点击标签行
     handleClick(tab) {
       console.log(tab);
-    },
-    //点击更多事件
-    handleMoreClick(tabItemData) {
-      console.log(tabItemData);
-    },
+    }
   }
 };
 </script>

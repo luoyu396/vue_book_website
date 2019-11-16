@@ -5,6 +5,8 @@ import register from '@/view/register'
 import index from '@/view/index'
 import home from '@/view/home'
 import book from '@/view/book'
+import user_info from '@/view/user-info'
+
 Vue.use(Router)
 
 export default new Router({
@@ -24,6 +26,11 @@ export default new Router({
       path: '/register',
       name: 'register',
       component: register
+    },
+    {
+      path: '/user_info',
+      name: 'user_info',
+      component: user_info
     },
     {
       path: '/index',

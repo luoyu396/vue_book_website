@@ -5,7 +5,7 @@
         <el-input placeholder="图书名称/出版社/作者/ISBN" v-model="search" class="input-with-select">
           <el-button type="primary" @click="searchForm" class="el-icon-search btn" slot="append"></el-button>
         </el-input>
-        <el-button class="my-card">
+        <el-button class="my-card" @click="myCard">
           我的购物车
           <i class="el-icon-information"></i>
         </el-button>
@@ -104,7 +104,7 @@
               </div>
             </li>
           </ul>
-          <div style="min-height: 500px;">
+          <div style="min-height: 500px;margin-top:20px;">
             <v-book-list 
               :pageable="pageable" 
               :bookInfos="bookInfos"
@@ -122,7 +122,7 @@
 <script>
 import treeSelect from "@/components/tree-select.vue";
 import BookList from './components/book-list.vue';
-
+import { mapState } from "vuex";
 export default {
   components: {
     "select-tree": treeSelect,
@@ -147,7 +147,7 @@ export default {
       //当前页
       page: 1,
       //页面大小
-      rows: 10,
+      rows: 8,
       //查询参数
       searchParams: {
         typeId: "",
@@ -199,6 +199,13 @@ export default {
     this.selectPublishers();
     //获取作者
     this.selectAuthors();
+  },
+  computed: {
+    ...mapState({
+      sysData(state) {
+        return state;
+      }
+    })
   },
   mounted: function() {
     let _this = this;
@@ -378,8 +385,24 @@ export default {
         }
       });
     },
+    //我的购物车
+    myCard() {
+      if (this.sysData.userId == undefined || this.sysData.userId == null) {
+        this.$confirm("您还未登录，请确认是否登录？", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(() => {
+          this.$router.push({
+            name: "login"
+          });
+        });
+      }
+    },
     //查看图书详情
     handleViewBookDetil(data) {}
   }
 };
 </script>
+<style scoped>
+</style>

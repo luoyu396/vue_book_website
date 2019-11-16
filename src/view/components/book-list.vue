@@ -24,7 +24,7 @@
             @current-change="handleCurrentChange"
             :current-page.sync="bookInfos.pageNum"
             :page-size="bookInfos.pageSize"
-            layout="prev, pager, next"
+            layout="prev, pager, next, total"
             :total="bookInfos.total">
           </el-pagination>
           <span class="total-page">
@@ -107,7 +107,7 @@
       border:1px solid rgba(217,217,217,1);
       box-sizing: border-box;
       width: 100%;
-      height: 190px;
+      height: 250px;
       border-radius:  2px;
       object-fit: cover;
       margin-bottom: 10px;
