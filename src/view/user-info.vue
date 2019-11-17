@@ -124,7 +124,7 @@
                     style="width: 100%;min-height: 100px;"
                     stripe
                   >
-                    <el-table-column prop="itemId" label="订单详情" align="left">
+                    <el-table-column prop="itemId" label="图书" align="left">
                       <template slot-scope="scope">
                           <img
                             style="width:100px;height:100px;"

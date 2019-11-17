@@ -1,3 +1,4 @@
+<!--图书展示列表-->
 <template>
   <div class="info">
     <div class="wrap">
@@ -116,6 +117,50 @@
         </div>
       </div>
     </div>
+    <el-dialog title="我的购物车" :visible.sync="dialogTableVisible" width="950px">
+      <el-table :data="myCardList" class="dialog-grid-table-data" stripe border>
+        <el-table-column prop="cardId" label="图书" width="250" align="center">
+          <template slot-scope="scope">
+            <img style="width:100px;height:100px;" :src="$imgUrl+scope.row.downloadUrl" alt />
+            {{scope.row.bookName}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="bookPrice" label="图书价格" align="center">
+          <template slot-scope="scope">
+            ￥{{scope.row.bookPrice}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="bookCount" label="数量" align="center">
+          <template slot-scope="scope">
+            <el-input-number
+              v-model="scope.row.bookCount"
+              @change="handleCountChange(scope.row)"
+              :min="1"
+              label="数量"
+            ></el-input-number>
+          </template>
+        </el-table-column>
+        <el-table-column prop="subTotal" label="小计" align="center">
+          <template slot-scope="scope">
+            ￥{{scope.row.bookPrice*scope.row.bookCount}}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="操作" width="100">
+          <template slot-scope="scope">
+            <el-button @click="handleRemoveClick(scope.row)" type="text" size="small">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div slot="footer" class="dialog-footer" style="text-align:left;height: 40px;">
+        <p >
+          共
+          <span>{{myBookCount}}</span>本图书, 总计金额：
+          <span>{{myBookTotal}}</span>元
+          <span v-if="myBookCount == 0" style="float:right;color:red">请添加图书</span>
+          <el-button v-if="myBookCount != 0" type="primary" size="small" style="float:right;" @click="submitMyCard">提交订单</el-button>
+        </p>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -142,6 +187,14 @@ export default {
       selectAuthorsUrl: this.$url + "book/authors",
       //高级搜索图书
       customBookListUrl: this.$url + "book/customBookList",
+      //我的购物车URL
+      myCardUrl: this.$url + "myCard/queryList",
+      //更新我的购物车URL
+      myCardUpdateUrl: this.$url + "myCard/update",
+      //删除我的购物车URL
+      myCardDeleteUrl: this.$url + "myCard/delete",
+      //提交购物车
+      submitMyCardUrl: this.$url + "myCard/submitMyCard",
       //搜索内容
       search: "",
       //当前页
@@ -185,7 +238,14 @@ export default {
       //图书信息
       bookInfos: {},
       //显示分页
-      pageable: false
+      pageable: false,
+      //我的购物车
+      myCardList: [],
+      //总图书数量
+      myBookCount: 0,
+      //总图书金额
+      myBookTotal: 0,
+      dialogTableVisible: false
     };
   },
   created: function() {
@@ -199,6 +259,8 @@ export default {
     this.selectPublishers();
     //获取作者
     this.selectAuthors();
+    //获取我的购物车
+    this.getMyCard();
   },
   computed: {
     ...mapState({
@@ -385,6 +447,31 @@ export default {
         }
       });
     },
+    //获取我的购物车
+    getMyCard() {
+      var _this = this;
+      if (_this.sysData.userId != undefined && _this.sysData.userId != null) {
+        let params = new URLSearchParams();
+        params.append("userId", _this.sysData.userId);
+        params.append("contentType", 1);
+        _this.$ajax.get(_this.myCardUrl, params).then(res => {
+          res = res.data;
+          if (res.code == 200) {
+            _this.myCardList = res.data;
+            _this.myBookCount = 0;
+            _this.myBookTotal = 0;
+            if(_this.myCardList.length >0) {
+              _this.myCardList.forEach(card=>{
+                _this.myBookCount += card.bookCount;
+                _this.myBookTotal += card.bookPrice * card.bookCount;
+              })
+            }
+          } else {
+            _this.myCardList = [];
+          }
+        });
+      }
+    },
     //我的购物车
     myCard() {
       if (this.sysData.userId == undefined || this.sysData.userId == null) {
@@ -398,9 +485,81 @@ export default {
           });
         });
       }
+      else {
+        //获取我的购物车
+        this.getMyCard();
+        this.dialogTableVisible = true;
+      }
+    },
+    //删除购物车
+    handleRemoveClick(row){
+      var _this = this;
+      _this
+        .$confirm("确认删除记录吗？", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+        .then(() => {
+          //执行删除操作
+          _this.$ajax.delete(_this.myCardDeleteUrl + "/" + row.cardId).then(res => {
+            res = res.data;
+            if (res.code == 200) {
+              //获取我的购物车
+              _this.getMyCard();
+            } else {
+              _this.$message({
+                message: res.msg,
+                type: "error"
+              });
+            }
+          });
+        });
+    },
+    //修改图书数量
+    handleCountChange(row){
+      var _this = this;
+      _this.$ajax.put(_this.myCardUpdateUrl, row).then(res => {
+        res = res.data;
+        if (res.code == 200) {
+          //获取我的购物车
+          _this.getMyCard();
+        } else {
+          _this.$message({
+            message: res.msg,
+            type: "error"
+          });
+        }
+      });
+    },
+    //提交我的订单
+    submitMyCard() {
+      let _this = this;
+      _this.$ajax.post(_this.submitMyCardUrl, _this.myCardList).then(res => {
+        res = res.data;
+        if (res.code == 200) {
+          _this.$message({
+            message: "提交成功",
+            type: "success"
+          });
+          _this.dialogTableVisible = false;
+        } else {
+          _this.$message({
+            message: res.msg,
+            type: "error"
+          });
+        }
+      });
     },
     //查看图书详情
-    handleViewBookDetil(data) {}
+    handleViewBookDetil(data) {
+      this.$router.push({
+        name: "book_detail",
+        params: {
+          bookId: data.bookId
+        }
+      })
+    }
   }
 };
 </script>
