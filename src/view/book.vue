@@ -41,7 +41,7 @@
           </el-breadcrumb>
         </div>
         <div class="search-box">
-          <p class="header-title">商品筛选
+          <p class="header-title">条件筛选
           </p>
           <ul class="search-body-wrap">
             <li class="parent-node">
