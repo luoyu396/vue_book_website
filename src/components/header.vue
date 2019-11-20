@@ -42,7 +42,7 @@ export default {
       window.sessionStorage.clear();
       this.$store.commit("clearSysData",this.user);
       this.$router.push({
-        name: "login"
+        name: "index"
       });
     },
     //注册
