@@ -297,6 +297,11 @@ export default {
   },
   mounted: function() {
     this.userInfo = this.sysData;
+    this.activeName = this.$route.params.type == null ? 'user' : this.$route.params.type;
+    if(this.activeName == "order") {
+      //查询订单
+      this.orderInfoAndItemList();
+    }
     this.userFormData = Object.assign({}, this.sysData);
   },
   filters: {
