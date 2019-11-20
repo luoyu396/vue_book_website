@@ -325,7 +325,7 @@ export default {
       window.sessionStorage.clear();
       this.$store.commit("clearSysData", this.userInfo);
       this.$router.push({
-        name: "login"
+        name: "index"
       });
     },
     //首页
